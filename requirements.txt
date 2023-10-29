@@ -2,3 +2,4 @@ image
 requests
 pyTelegramBotAPI
 tldextract
+opencv-python
