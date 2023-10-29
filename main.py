@@ -45,6 +45,8 @@ def msg_media(message):
                     text_result += f"<b>Year:</b> {result['year']}\n"
                 if result["time"]:
                     text_result += f"<b>Time:</b> {result['time']}\n"
+                if result["pic"]:
+                    text_result += f"<a href=\"{result['pic']}\">Thumbnail</a>"
 
                 markup = types.InlineKeyboardMarkup()
                 buttons = []

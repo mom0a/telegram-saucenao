@@ -45,20 +45,23 @@ class ApiRequest:
             }
 
             if "results" in result and len(result["results"]) >= 1:
+                maxsimilarity = 0.00
                 for case in result["results"]:
                     # name = part = year = time = url = pic = sim = char = mat = ""
                     url_data = {"url": "", "source": "", "similarity": ""}
 
-                    if "source" in case["data"] and not name:
-                        name = case["data"]["source"]
-                    elif "title" in case["data"] and not name:
-                        name = case["data"]["title"]
-                    if "part" in case["data"] and not part:
-                        part = case["data"]["part"]
-                    if "year" in case["data"] and not year:
-                        year = case["data"]["year"]
-                    if "est_time" in case["data"] and not time:
-                        time = case["data"]["est_time"]
+                    if "similarity" in case["header"]:
+                        # sim = case["header"]["similarity"]
+                        url_data["similarity"] = case["header"]["similarity"]
+                        if float(url_data["similarity"]) > maxsimilarity:  # Display information from highest similarity item only
+                            maxsimilarity = float(url_data["similarity"])
+                            name = case["data"]["title"] if "title" in case["data"] else None
+                            if name is None:
+                                name = case["data"]["source"] if "source" in case["data"] else None
+                            part = case["data"]["part"] if "part" in case["data"] else None
+                            year = case["data"]["year"] if "year" in case["data"] else None
+                            time = case["data"]["est_time"] if "est_time" in case["data"] else None
+                            pic = case["header"]["thumbnail"] if "thumbnail" in case["header"] else None
                     if "ext_urls" in case["data"]:
                         # url = case["data"]["ext_urls"][0]
                         url_data["url"] = case["data"]["ext_urls"][0]
@@ -66,11 +69,7 @@ class ApiRequest:
                     #    char = case["data"]["characters"]
                     # if "material" in case["data"]:
                     #    mat = case["data"]["material"]
-                    # if "thumbnail" in case["header"]:
-                    #    pic = case["header"]["thumbnail"]
-                    if "similarity" in case["header"]:
-                        # sim = case["header"]["similarity"]
-                        url_data["similarity"] = case["header"]["similarity"]
+                    
 
                     for source in sources:
                         if sources[source] in case["data"]:
@@ -88,6 +87,7 @@ class ApiRequest:
                     "part": part,
                     "year": year,
                     "time": time,
+                    "pic": pic,
                     "urls": urls,
                 }
                 return data
